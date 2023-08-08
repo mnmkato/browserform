@@ -221,15 +221,16 @@ confirmPaswordInput.addEventListener("input",validate().validateConfirmPassword)
 const form = document.getElementById("userForm")
 form.addEventListener("submit",(event)=>{
     event.preventDefault();
-    validate().validateEmail()
-    validate().validateZip()
-    validate().validatePassword()
-    validate().validateConfirmPassword()
-    if (validate().validateForm()) {
+    const validator = validate();
+    validator.validateEmail()
+    validator.validateZip()
+    validator.validatePassword()
+    validator.validateConfirmPassword()
+    if (validator.validateForm()) {
         //submit
+        console.log("Submit...")
     }
 })
-
 
 function validate(){
     const makeHint = function(parent,hintId,hintText) {
@@ -241,65 +242,100 @@ function validate(){
              hint.textContent=hintText
              parent.appendChild(hint)
              return hint
-             
         }
         hint.textContent=hintText
         return hint
     }
+    const removeHint  =  function (parent,hintId) {
+        const hint = document.getElementById(hintId)
+        if (hint!=null) {
+             parent.removeChild(hint)
+        }
+        
+    }
     const validateEmail = function(){
+        let isValid
         const emailValue = emailInput.value
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         if (emailValue === "") {
             const emailHint = makeHint(emailInput.parentNode,"emailHint","Email is required")
             emailHint.classList.add("hintInvalid") 
+            isValid=false
         } else if (!(emailRegex.test(emailValue))) {
-            const hint = makeHint(emailRegex.parentNode,"emailHint","Enter valid Email format")
+            const hint = makeHint(emailInput.parentNode,"emailHint","Enter valid Email format")
             hint.classList.add("hintInvalid") 
+            isValid=false
         } else {
-            emailInput.parentNode.removeChild(document.getElementById("emailHint"))
+            removeHint(emailInput.parentNode,"emailHint")
+            isValid=true
         }
+        return isValid
     }
     const validateZip = function(){
+        let isValid
         const zipValue = zipInput.value
         const zipRegex = /(\d{5}([\-]\d{4})?)/
         if (zipValue === "") {
             const hint = makeHint(zipInput.parentNode,"zipHint","Zip Code is required")
             hint.classList.add("hintInvalid") 
+            isValid=false
         } else if (!(zipRegex.test(zipValue))) {
             const hint = makeHint(zipInput.parentNode,"zipHint","Enter valid Zip code format")
             hint.classList.add("hintInvalid") 
+            isValid=false
         } else {
-            zipInput.parentNode.removeChild(document.getElementById("zipHint"))
+            removeHint(zipInput.parentNode,"zipHint")
+            isValid=true
         }
+        return isValid
     }
     const validatePassword = function(){
+        let isValid = false
         const password = passwordInput.value
         const hints = [
-            { id: "passWordHint1", text: "At least 8 characters", regex: /^.{8,}$/ },
-            { id: "passWordHint2", text: "At least 1 Upper case character", regex: /[A-Z]/ },
-            { id: "passWordHint3", text: "At least 1 special character", regex: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/ },
-            { id: "passWordHint4", text: "At least 1 number", regex: /[0-9]/ }
+            { test: false, id: "passWordHint1", text: "At least 8 characters", regex: /^.{8,}$/ },
+            { test: false, id: "passWordHint2", text: "At least 1 Upper case character", regex: /[A-Z]/ },
+            { test: false, id: "passWordHint3", text: "At least 1 special character", regex: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/ },
+            { test: false, id: "passWordHint4", text: "At least 1 number", regex: /[0-9]/ }
         ];
         hints.forEach((hintItem)=>{
             const hint = makeHint(passwordInput.parentNode,hintItem.id,hintItem.text)
             if (hintItem.regex.test(password)) {
                 hint.classList.add("hintValid")
-
+                hintItem.test=true
+                
             } else {
                 hint.classList.remove("hintValid")
+                hintItem.test=false
+                
             }
         })
-
+        if (hints[0].test && hints[1].test && hints[2].test && hints[3].test ) {
+           isValid = true
+           
+        }
+        return isValid
     }
     const validateConfirmPassword = function(){
+        let isValid
         if (!(confirmPaswordInput.value==passwordInput.value)) {
             const hint = makeHint(confirmPaswordInput.parentNode,"confirmPaswordHint","Passwords do not match")
             hint.classList.add("hintInvalid")
+            isValid=false
         } else{
-            confirmPaswordInput.parentNode.removeChild(document.getElementById("confirmPaswordHint"))
+            removeHint(confirmPaswordInput.parentNode,"confirmPaswordHint")
+            isValid=true
         }
+        return isValid
     }
     const validateForm = function(){
+        //final checks
+        
+        if (validateEmail() && validateZip() && validatePassword() && validateConfirmPassword()) {
+            return true
+        } else {
+            return false
+        }
         
     }
     return{validateForm,validateEmail,validateZip,validatePassword,validateConfirmPassword}
