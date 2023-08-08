@@ -1,0 +1,53 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(69, 69, 153);
+    display: flex;
+    justify-content: center;
+}
+#container{
+    width:fit-content;
+    height: fit-content;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    color: white;
+    background-color: darkblue;
+    box-shadow: 0.1rem 0.1rem black;
+}
+#container>p,#container>h1{
+    text-align: center;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+label{
+    display: flex;
+    flex-direction: column;
+}
+.hint{
+    margin: 0;
+    font-size: 0.7rem;
+}
+.hintValid{
+    color: lightgreen;
+}
+.hintInvalid{
+    color: red;
+}
+.hidden{
+    display: none;
+}
+input, select{
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    border-radius: 0.3rem;
+    padding: 0.3rem;
+}
+button{
+    padding: 0.3rem;
+    border-radius: 0.3rem;
+    background-color: rgb(69, 69, 153);
+    color: white;
+    border: 0.1rem solid white;
+}
